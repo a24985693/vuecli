@@ -1,0 +1,15 @@
+@import "~bootstrap/scss/functions";
+
+@import "./helpers/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+
+@import "~bootstrap/scss/bootstrap";
+
+@import "./components/header";
+@import "./components/card";
+@import "./components/word";
+@import "./components/navbar";
+@import "./components/aboutUs";
+@import "./components/swiper";
