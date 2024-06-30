@@ -1,5 +1,6 @@
 <template data-bs-spy="scroll" data-bs-target="#userNav" data-bs-offset="0">
-  <header class="header d-flex align-items-lg-center justify-content-center vh-100">
+  <header class="header d-flex align-items-lg-center justify-content-center vh-100"
+    style="margin-top:-120px">
     <div class="text-center text-white">
       <h3 class="fw-blod" id="huahua">花花世界</h3>
     </div>
@@ -118,21 +119,17 @@
 
 <script>
 import IndexSwiper from '@/components/IndexSwiper.vue';
+import fullpathMixin from '@/mixins/fullpathMixin';
 
 export default {
   components: {
     IndexSwiper,
   },
-  inject: ['emitter'],
+  mixins: [fullpathMixin],
   data() {
     return {
       swiper: {},
     };
-  },
-  created() {
-    this.emitter.emit('get-path', {
-      fullPath: this.$route.fullPath,
-    });
   },
 };
 </script>

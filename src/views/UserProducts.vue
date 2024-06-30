@@ -1,8 +1,8 @@
 <template>
   <Loading :active="isLoading"></Loading>
   <div class="container">
-    <div class="productsList row mb-5 g-5" style="margin-top:100px">
-      <div class="col-3">
+    <div class="productsList row mb-5 g-5">
+      <div class="col-12 col-md-3">
         <div class="sticky-md-top" style="top:120px">
           <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -35,55 +35,52 @@
           </div>
         </div>
       </div>
-      <div class="col">
-          <div class="row row-cols-3 mb-5 g-5 justify-content-bewtween">
+      <div class="col col-md-9">
+          <div class="row row-cols-3 mb-5 g-5 justify-content-bewtween ">
             <template v-if="isActive === '全部'">
-              <div class="col-4" v-for="item in products" :key="item.id">
-                  <div class="card mx-auto h-100"
-                    @click.prevent="getProduct(item.id)" @keydown="getProduct(item.id)">
-                    <div class="overflow-hidden position-relative">
-                      <div class="more-text text-dark text-center bg-secondary py-1
-                        position-absolute bottom-0">
-                        查看更多
-                      </div>
-                      <img :src="item.imageUrl" class="card-img-top object-fit-cover w-100"
-                        alt="..." height="180px">
+              <div class="col-12 col-sm-6 col-md-4"
+                v-for="item in products" :key="item.id">
+                <div class="card mx-auto h-100"
+                  @click.prevent="getProduct(item.id)" @keydown="getProduct(item.id)">
+                  <div class="overflow-hidden position-relative">
+                    <div class="more-text text-dark text-center bg-secondary py-1
+                      position-absolute bottom-0">
+                      查看更多
                     </div>
-                    <div class="card-body">
-                      <span
-                      @click.stop="setFav(item.id)"
-                      @keypress.stop="setFav(item.id)">
-                        <i :class="favState(item.id)">
-                        </i>
-                      </span>
-                      <p class="fs-14 mb-1">#{{ item.category }}</p>
-                      <!-- <div v-for="(item,i) in favlist" :key="i">{{ item.title }}</div> -->
-                      <div class="d-none">
-                        {{ favlist }}
-                      </div>
-                      <h5 class="card-title">{{ item.title }}</h5>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <p class="fs-5 fw-semibold mb-0 text-pink" v-if="item.price">
-                          NT${{ item.price }}
-                        </p>
-                        <p class="fs-5 fw-semibold mb-0 text-pink" v-else>
-                          NT${{ item.origin_price }}
-                        </p>
-                        <del v-if="item.origin_price != item.price">
-                          NT${{ item.origin_price }}
-                        </del>
-                      </div>
-                    </div>
-                    <div class="card-foot p-0">
-                      <div class="btn-group btn-group-sm w-100">
-                        <button class="btn btn-info rounded-0 py-2"
-                          @click.stop="addtoCart(item.id)">
-                          <i class="fa-solid fa-cart-shopping me-1"></i>
-                          加入購物車
-                        </button>
-                      </div>
+                    <img :src="item.imageUrl" class="card-img-top object-fit-cover w-100"
+                      alt="...">
+                  </div>
+                  <div class="card-body">
+                    <span
+                    @click.stop="setFav(item.id)"
+                    @keypress.stop="setFav(item.id)">
+                      <i :class="favState(item.id)">
+                      </i>
+                    </span>
+                    <p class="fs-14 mb-1">#{{ item.category }}</p>
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <p class="fs-5 fw-semibold mb-0 text-pink" v-if="item.price">
+                        NT${{ item.price }}
+                      </p>
+                      <p class="fs-5 fw-semibold mb-0 text-pink" v-else>
+                        NT${{ item.origin_price }}
+                      </p>
+                      <del v-if="item.origin_price != item.price">
+                        NT${{ item.origin_price }}
+                      </del>
                     </div>
                   </div>
+                  <div class="card-foot p-0">
+                    <div class="btn-group btn-group-sm w-100">
+                      <button class="btn btn-info rounded-0 py-2"
+                        @click.stop="addtoCart(item.id)">
+                        <i class="fa-solid fa-cart-shopping me-1"></i>
+                        加入購物車
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </template>
             <template v-else>
@@ -122,6 +119,8 @@
 
 <script>
 import Pagination from '@/components/Pagination.vue';
+import fullpathMixin from '@/mixins/fullpathMixin';
+import getCartMixin from '@/mixins/getCartMixin';
 
 export default {
   components: {
@@ -133,26 +132,16 @@ export default {
       console.log(this.renderProducts);
     },
   },
-  inject: ['emitter'],
+  mixins: [fullpathMixin, getCartMixin],
   data() {
     return {
       products: [],
       pagination: {},
-      cart: {},
-      couponCode: '',
-      form: {
-        user: {
-          name: '',
-          email: '',
-          tel: '',
-          address: '',
-        },
-        message: '',
-      },
       isLoading: false,
       isActive: '全部',
       renderProducts: [],
       favorited: JSON.parse(localStorage.getItem('favorite')) || [],
+      couponCode: '',
     };
   },
   methods: {
@@ -181,8 +170,9 @@ export default {
       console.log(id);
       this.$http.post(url, { data: cart })
         .then((res) => {
-          console.log(res, 'addtoCart');
+          console.log(res);
           this.isLoading = false;
+          this.getCart();
         });
     },
     updateCart(item, quantity) {
@@ -210,34 +200,23 @@ export default {
         this.favorited.push(id);
       }
       localStorage.setItem('favorite', JSON.stringify(this.favorited));
-      console.log(localStorage);
       this.emitter.emit('get-like', {
         favorited: this.favorited,
       });
     },
+    favState(id) {
+      if (this.favorited.includes(id)) {
+        return 'fa-solid fa-heart';
+      }
+      return 'fa-regular fa-heart';
+    },
   },
   created() {
     this.getProducts();
-    this.emitter.emit('get-path', {
-      fullPath: this.$route.fullPath,
-    });
     this.emitter.emit('get-like', {
       favorited: this.favorited,
     });
     // localStorage.clear();
-  },
-  computed: {
-    favState() { // 閉包傳送參數 https://segmentfault.com/q/1010000009648670
-      return function (id) {
-        if (this.favorited.includes(id)) {
-          return 'fa-solid fa-heart';
-        }
-        return 'fa-regular fa-heart';
-      };
-    },
-    favlist() {
-      return this.products.filter((item) => this.favorited.includes(item.id));
-    },
   },
 };
 </script>

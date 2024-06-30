@@ -1,7 +1,7 @@
 <template>
   <Loading :active="isLoading"></Loading>
   <div class="container">
-    <nav style="margin-top:120px;" aria-label="breadcrumb">
+    <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
           <router-link to="/user/index">首頁</router-link>
@@ -28,7 +28,7 @@
           <hr>
           <div class="row mb-3">
             <div class="col-8">
-              <div class="input-group">
+              <div class="input-group updateNum">
                 <button class="btn btn-secondary"
                   @click="quantity = quantity - 1"
                   :disabled="quantity === 1">
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import fullpathMixin from '@/mixins/fullpathMixin';
+
 export default {
   data() {
     return {
@@ -64,7 +66,7 @@ export default {
       isLoading: false,
     };
   },
-  inject: ['emitter'],
+  mixins: [fullpathMixin],
   methods: {
     getProduct() {
       this.isLoading = true;

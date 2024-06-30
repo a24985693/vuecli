@@ -13,23 +13,34 @@
             </router-link>
           </li>
           <li class="nav-item mx-1">
+            <router-link class="nav-link" to="/user/productsList">
+              常見問題
+            </router-link>
+          </li>
+          <li class="nav-item mx-1">
+            <router-link class="nav-link" to="/user/productsList">
+              訂單查詢
+            </router-link>
+          </li>
+          <li class="nav-item mx-1">
             <a class="nav-link position-relative" href="#">
               <i class="fa-solid fa-heart fs-4"></i>
               <span class="icon-num bg-info text-dark rounded-circle position-absolute
                 d-inline-block text-center fw-bold"
               style=" ">
-                {{ favoritedNum }}
+                {{ favLength }}
               </span>
             </a>
           </li>
           <li class="nav-item mx-1">
-            <a class="nav-link position-relative" href="#">
+            <router-link class="nav-link position-relative"
+            to="/user/cart">
               <i class="fa-solid fa-cart-shopping fs-4"></i>
               <span class="icon-num bg-info text-dark rounded-circle position-absolute
                 d-inline-block text-center fw-bold">
-                4
+                {{ cartLength }}
               </span>
-            </a>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -43,7 +54,8 @@ export default {
     return {
       scrollNum: '',
       fullPath: '',
-      favoritedNum: '',
+      favLength: '',
+      cartLength: '',
     };
   },
   inject: ['emitter'],
@@ -51,19 +63,38 @@ export default {
     animated() {
       this.scrollNum = window.scrollY;
     },
+    getCart() {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      this.$http.get(url)
+        .then((res) => {
+          this.cart = res.data.data;
+          this.cartLength = this.cart.carts.length;
+          // console.log(this.cartNum);
+        });
+    },
+    getFavNum() {
+      // console.log(localStorage.getItem('favorite'));
+      if (localStorage.getItem('favorite')) {
+        const favObj = localStorage.getItem('favorite');
+        this.favLength = JSON.parse(favObj).length;
+      }
+    },
   },
   created() {
     window.addEventListener('scroll', this.animated);
     this.fullPath = this.$route.fullPath;
     this.emitter.on('get-path', (item) => {
       this.fullPath = item.fullPath;
-      console.log(this.fullPath);
     });
     this.emitter.on('get-like', (item) => {
       const { favorited } = item;
-      this.favoritedNum = favorited.length;
-      console.log(this.favoritedNum);
+      this.favLength = favorited.length;
     });
+    this.emitter.on('get-cart', (item) => {
+      this.cartLength = item.cartLength;
+    });
+    this.getCart();
+    this.getFavNum();
   },
 };
 </script>

@@ -1,8 +1,12 @@
 <template>
-  <UserNavbar></UserNavbar>
-    <router-view>
-    </router-view>
-  <Footer></Footer>
+  <div class="view-height">
+    <UserNavbar></UserNavbar>
+    <div class="user-view">
+      <router-view>
+      </router-view>
+    </div>
+    <Footer></Footer>
+  </div>
 </template>
 
 <script>

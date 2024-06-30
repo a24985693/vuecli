@@ -54,9 +54,9 @@ const routes = [
         component: () => import('../views/UserProduct.vue'),
       },
       {
-        path: 'Order',
-        name: 'Order',
-        component: () => import('../views/UserOrder.vue'),
+        path: 'information',
+        name: 'information',
+        component: () => import('../views/UserInformation.vue'),
       },
       {
         path: 'checkout/:orderId',
